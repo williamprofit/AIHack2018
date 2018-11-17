@@ -1,0 +1,6 @@
+# Ignore MacOS files
+.DS_Store
+._.DS_Store
+
+# Ignore Python files
+__pycache__
