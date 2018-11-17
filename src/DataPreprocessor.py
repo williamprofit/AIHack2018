@@ -3,11 +3,76 @@ import numpy as np
 import math
 from random import randint
 from keras.utils import to_categorical
+import itertools
 
 class DataPreprocessor():
     def __init__(self):
         self.file = pd.read_csv('dataset/data.csv')
         self.data = self.file.values
+
+    def oneHotOne(self, item, max_bound):
+        array = [0] * max_bound
+        array[item] = 1
+
+        return array
+
+    def oneHot(self, x, exclude):
+        maxes    = x.max(axis=0)
+        newArray = []
+
+        for i in range(len(x)):
+            newline = []
+            for j in range(len(x[i])):
+                if j in exclude:
+                    newline.append(x[i][j])
+                else:
+                    newline = list(itertools.chain(newline,
+                              self.oneHotOne(x[i][j], maxes[j]+1)))
+
+            newArray.append(newline)
+
+        return np.asarray(newArray)
+
+    def setVehicleAgeBand(self, x):
+        age = x[2]
+
+        if age == -1:
+            age = 4
+        elif age >= 25:
+            age = 12
+        else:
+            age = np.floor(age / 2)
+
+        x[2] = int(age)
+
+    def setTimeBand(self, x):
+        time  = x[4]
+
+        # If time is undefined
+        if isinstance(time, float):
+            hours = '12' # Assume midday
+        else:
+            hours = time.split(':')[0]
+
+        x[4] = int(hours)
+
+    def preprocess(self):
+        for i in range(len(self.data)):
+            self.setVehicleAgeBand(self.data[i])
+            self.setTimeBand(self.data[i])
+
+            self.fillMissingData(self.data[i])
+
+        print(self.data[2390])
+
+        # Convert to np array & one hot
+        self.data = np.asarray(self.data)
+        self.data = self.oneHot(self.data, [10])
+
+        print(self.data[2390])
+
+    def getData(self):
+        return self.data
 
     def fillMissingData(self, x):
         # Gender
@@ -76,42 +141,4 @@ class DataPreprocessor():
         else:
             x[9] = 2
 
-    def oneHot(self):
-        pass
-
-    def setVehicleAgeBand(self, x):
-        age = x[2]
-
-        if age == -1:
-            age = 4
-        elif age >= 25:
-            age = 12
-        else:
-            age = np.floor(age / 2)
-
-        x[2] = int(age)
-
-    def setTimeBand(self, x):
-        time  = x[4]
-
-        # If time is undefined
-        if isinstance(time, float):
-            hours = '12' # Assume midday
-        else:
-            hours = time[0:2]
-
-        x[4] = int(hours)
-
-    def preprocess(self):
-        speeds = []
-
-        for i in range(len(self.data)):
-            self.setVehicleAgeBand(self.data[i])
-            self.setTimeBand(self.data[i])
-
-            self.fillMissingData(self.data[i])
-
-        print(self.data[2387])
-
-    def getData(self):
-        return self.data
+        x[11] = x[11] - 1
