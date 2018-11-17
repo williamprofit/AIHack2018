@@ -63,16 +63,22 @@ class DataPreprocessor():
 
             self.fillMissingData(self.data[i])
 
-        print(self.data[2390])
-
         # Convert to np array & one hot
         self.data = np.asarray(self.data)
         self.data = self.oneHot(self.data, [10])
 
-        print(self.data[2390])
+    def getDataForSeverity(self):
+        X = self.data[:, :-4]
+        y = self.data[:, -3:]
+        return X, y
 
-    def getData(self):
-        return self.data
+    def getDataForCasualties(self):
+        X1 = self.data[:, :-4]
+        X2 = self.data[:, -3:]
+        X = np.column_stack((X1, X2))
+
+        y = self.data[:, -4]
+        return X, y
 
     def fillMissingData(self, x):
         # Gender
