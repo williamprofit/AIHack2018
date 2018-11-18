@@ -63,6 +63,7 @@ class DataPreprocessor():
     def preprocess(self, data=[]):
         if (len(data)==0):
             data = self.data
+        print("length: " + str(len(data[0])))
         for i in range(len(self.data)):
             self.setVehicleAgeBand(self.data[i])
             self.setTimeBand(self.data[i])
