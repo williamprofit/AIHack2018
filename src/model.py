@@ -51,6 +51,8 @@ def trainSeverity(data):
     model.fit(X_train, y_train, epochs=EPOCHS, batch_size=BATCH_SIZE)
     print(model.evaluate(X_test, y_test))
 
+    model.save("models/severity.h5")
+
 def trainCasualites(data):
     X, y = data.getDataForCasualties()
     shuffleLists(X, y)
