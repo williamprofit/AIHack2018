@@ -3,14 +3,14 @@ from keras.layers.advanced_activations import LeakyReLU
 from keras.optimizers import Adam, SGD
 from keras.models import Model, Sequential
 from keras import activations
-
+import cmath as math
 from sklearn.model_selection import train_test_split
 import random
 
 from DataPreprocessor import DataPreprocessor
 
 BATCH_SIZE=32
-EPOCHS=10
+EPOCHS=2
 
 def createModelSeverity():
     model = Sequential()
@@ -27,11 +27,10 @@ def createModelSeverity():
 def createModelCasualties():
     model = Sequential()
     model.add(Dense(32, activation='relu'))
-    model.add(Dense(32, activation='relu'))
-    model.add(Dense(1, activation='relu'))
+    model.add(Dense(39, activation='softmax'))
 
-    adam = Adam(lr=0.001)
-    model.compile(loss='mse',
+    adam = Adam(lr=0.0001)
+    model.compile(loss='categorical_crossentropy',
                   optimizer=adam,
                   metrics=['accuracy'])
 
@@ -52,6 +51,8 @@ def trainSeverity(data):
     model.fit(X_train, y_train, epochs=EPOCHS, batch_size=BATCH_SIZE)
     print(model.evaluate(X_test, y_test))
 
+    model.save("models/severity.h5")
+
 def trainCasualites(data):
     X, y = data.getDataForCasualties()
     shuffleLists(X, y)
@@ -61,7 +62,6 @@ def trainCasualites(data):
     model = createModelCasualties()
     model.fit(X_train, y_train, epochs=EPOCHS, batch_size=BATCH_SIZE)
     print(model.evaluate(X_test, y_test))
-
 
 def main():
     dataprep = DataPreprocessor()
