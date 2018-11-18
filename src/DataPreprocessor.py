@@ -94,7 +94,7 @@ class DataPreprocessor():
         # Age band of driver
         x[1] = x[1] - 1
         if x[1] == -2:
-            x[1] = randint(0,10)
+            x[1] = 3
 
         # Day of week
         x[3] = x[3] - 1
