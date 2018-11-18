@@ -18,8 +18,7 @@ class DataPreprocessor():
         return array
 
     def oneHot(self, x, exclude):
-        maxes    = x.max(axis=0)
-        print
+        maxes    = [1, 10, 12, 6, 23, 5, 6, 9, 8, 8, 38, 2]
         newArray = []
 
         #i indexes rows, j indexes colums in ith row
@@ -61,9 +60,9 @@ class DataPreprocessor():
 
     
     def preprocess(self, data=[]):
-        if (len(data)==0):
-            data = self.data
-        print("length: " + str(len(data[0])))
+        if (len(data) != 0):
+            self.data = data
+ 
         for i in range(len(self.data)):
             self.setVehicleAgeBand(self.data[i])
             self.setTimeBand(self.data[i])
@@ -72,8 +71,9 @@ class DataPreprocessor():
 
         # Convert to np array & one hot
         self.data = np.asarray(self.data)
+        print(self.data.max(axis=0))
         self.data = self.oneHot(self.data, [])
-
+        print(self.data[0])
 
     def getDataForSeverity(self):
         X = self.data[:, :-42]

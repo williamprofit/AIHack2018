@@ -10,7 +10,7 @@ import random
 from DataPreprocessor import DataPreprocessor
 
 BATCH_SIZE=32
-EPOCHS=0
+EPOCHS=1
 
 def createModelSeverity():
     model = Sequential()
@@ -21,7 +21,6 @@ def createModelSeverity():
     model.compile(loss='categorical_crossentropy',
                   optimizer=adam,
                   metrics=['accuracy'])
-
     return model
 
 def createModelCasualties():
