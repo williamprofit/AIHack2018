@@ -4,6 +4,7 @@ import math
 from random import randint
 from keras.utils import to_categorical
 import itertools
+import random
 
 class DataPreprocessor():
     def __init__(self):
@@ -18,8 +19,10 @@ class DataPreprocessor():
 
     def oneHot(self, x, exclude):
         maxes    = x.max(axis=0)
+        print
         newArray = []
 
+        #i indexes rows, j indexes colums in ith row
         for i in range(len(x)):
             newline = []
             for j in range(len(x[i])):
@@ -65,31 +68,33 @@ class DataPreprocessor():
 
         # Convert to np array & one hot
         self.data = np.asarray(self.data)
-        self.data = self.oneHot(self.data, [10])
+        self.data = self.oneHot(self.data, [])
+
 
     def getDataForSeverity(self):
-        X = self.data[:, :-4]
+        X = self.data[:, :-42]
         y = self.data[:, -3:]
         return X, y
 
     def getDataForCasualties(self):
-        X1 = self.data[:, :-4]
+
+        X1 = self.data[:, :-42]
         X2 = self.data[:, -3:]
         X = np.column_stack((X1, X2))
 
-        y = self.data[:, -4]
+        y = self.data[:, -42:-3]
         return X, y
 
     def fillMissingData(self, x):
         # Gender
         x[0] = x[0] - 1
         if x[0] != 0 and x[0] != 1:
-            x[0] = randint(0, 1)
+            x[0] = randint(0,1)
 
         # Age band of driver
         x[1] = x[1] - 1
         if x[1] == -2:
-            x[1] = randint(0, 10)
+            x[1] = randint(0,10)
 
         # Day of week
         x[3] = x[3] - 1
@@ -112,7 +117,7 @@ class DataPreprocessor():
 
         # Speed limit
         if x[6] == 0:
-            x[6] == 40
+            x[6] = 40
 
         x[6] = int(x[6] / 10 - 1)
 
