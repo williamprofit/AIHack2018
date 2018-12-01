@@ -10,7 +10,7 @@ import random
 from DataPreprocessor import DataPreprocessor
 
 BATCH_SIZE=32
-EPOCHS=0
+EPOCHS=2
 
 def createModelSeverity():
     model = Sequential()
@@ -44,30 +44,30 @@ def shuffleLists(a, b):
 def trainSeverity(data):
     X, y = data.getDataForSeverity()
     shuffleLists(X, y)
+
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.10)
+
     model = createModelSeverity()
     model.fit(X_train, y_train, epochs=EPOCHS, batch_size=BATCH_SIZE)
     print(model.evaluate(X_test, y_test))
-    print(len(X_train[0]))
 
+    model.save("models/severity.h5")
 
 def trainCasualites(data):
     X, y = data.getDataForCasualties()
     shuffleLists(X, y)
-    print(len(X))
-    print(len(y[0]))
+
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.10)
 
     model = createModelCasualties()
     model.fit(X_train, y_train, epochs=EPOCHS, batch_size=BATCH_SIZE)
     print(model.evaluate(X_test, y_test))
-    print("---------")
 
 def main():
     dataprep = DataPreprocessor()
     dataprep.preprocess()
 
-    trainSeverity(dataprep)
+    trainCasualites(dataprep)
 
 if __name__ == '__main__':
     main()
