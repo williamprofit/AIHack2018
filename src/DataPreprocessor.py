@@ -65,6 +65,7 @@ class DataPreprocessor():
             self.setTimeBand(self.data[i])
 
             self.fillMissingData(self.data[i])
+            self.duplicatingRows(self.data, i)
 
         # Convert to np array & one hot
         self.data = np.asarray(self.data)
@@ -84,6 +85,12 @@ class DataPreprocessor():
 
         y = self.data[:, -42:-3]
         return X, y
+
+    def duplicatingRows(self, x, l):
+        severity = x[l][11]
+        if severity == 1 or severity == 2:
+            for k in range(1,6):
+                x.append(x[l])
 
     def fillMissingData(self, x):
         # Gender
