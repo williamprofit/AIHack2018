@@ -5,7 +5,7 @@
     <title>Find a route using Geolocation and Google Maps API</title>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script src="http://maps.google.com/maps/api/js?sensor=true&key=AIzaSyBlHubJVUz2T6ac71YX91DY3j2Ddfjmyko"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>	
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script src="jquery-csv.js"></script>
     <script>
       console.log("hey");
@@ -17,13 +17,17 @@
     time:"13:03",
     weather:1,
     vehicle_type:9
-  } 
+  }
+      var paths = {};
 
       function calculateRoute(from, to, severities) {
+        console.log("look here");
+        console.log(paths[1]);
+
         // Center initialized to Naples, Italy
         //console.log(severities[0]);
         var myOptions = {
-          zoom: 10,
+          zoom: 13,
           center: new google.maps.LatLng(51.4985146, -0.1775063),
           mapTypeId: google.maps.MapTypeId.ROADMAP
         };
@@ -42,20 +46,32 @@
         var colours = new Array();
 
         var i;
-        for (i = 0; i < severities.length; i++) {
-          var serverity = severities[i].trim();
-          console.log(serverity);
-          console.log(serverity=="2");
-          if(serverity=="0"){
-            colours.push("#4BF442");
+        console.log("----");
+        console.log(paths);
+        console.log("----");
+        path = paths[from+","+to]
+        if (typeof path != 'undefined'){
+          console.log("Previous path!!");
+          colours = path;
+        }else{
+          for (i = 0; i < severities.length; i++) {
+              var num = parseInt(100*Math.random());
+              if(num < 50){
+                colours.push("#4BF442");
+              }
+              else if(num < 95){
+                colours.push("#41D3F4");
+              }
+              else{
+                colours.push("#FF0000");
+              }
           }
-          else if(serverity=="1"){
-            colours.push("#41D3F4");
-          }
-          else if(serverity=="2"){
-            colours.push("#FF0000");
-          }
-        } 
+          console.log("adding new");
+          paths[from+","+to] = colours;
+          console.log(paths[from+","+to]);
+        }
+        console.log("got here");
+        var geocoder = new google.maps.Geocoder;
 
         directionsService.route(directionsRequest, function (response, status) {
                 //console.log(response.routes[0].legs);
@@ -64,8 +80,12 @@
                     var legs = response.routes[0].legs;
                     for (i = 0; i < legs.length; i++) {
                         var steps = legs[i].steps;
-                        //console.log(steps);
-                        
+                        //console.log(coord);
+
+
+                        var coord = steps[0].lat_lngs[0].toJSON();
+                        map.setCenter(coord);
+
                         for (j = 0; j < steps.length; j++) {
                             var nextSegment = steps[j].path;
                             var poly = new google.maps.Polyline({
@@ -74,7 +94,7 @@
                                         strokeOpacity: 1.0,
                                         strokeWeight: 4
                                     });
-                            
+
                             for (k = 0; k < nextSegment.length; k++) {
                                 //poly.setOptions({strokeColor:colours[k%3]});
                                 poly.getPath().push(nextSegment[k]);
@@ -87,7 +107,7 @@
                 } else {
                     alert("Something went wrong" + status);
                 }
-            });      
+            });
 
       }
 
@@ -143,10 +163,10 @@
           "," + person.day_of_week +"," + person.time +","+  person.weather  +
           "," + person.vehicle_type + ", " +  $("#from").val() + "-" + $("#to").val();
 
-          console.log(datatosend);
+          //console.log(datatosend);
           result = runPyScript(datatosend);
-          console.log(typeof result);
-          console.log('Got back ' + result);
+          //console.log(typeof result);
+          //console.log('Got back ' + result);
           calculateRoute($("#from").val(), $("#to").val(), result.split(","));
         });
 
@@ -172,7 +192,6 @@
       <br />
 
       <input type="submit" />
-      <input type="reset" />
     </form>
     <center><div id="map"></div></center>
     <p id="error"></p>

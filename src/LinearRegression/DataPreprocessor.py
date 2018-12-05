@@ -4,7 +4,6 @@ import math
 from random import randint
 from keras.utils import to_categorical
 import itertools
-import random
 
 class DataPreprocessor():
     def __init__(self):
@@ -18,10 +17,9 @@ class DataPreprocessor():
         return array
 
     def oneHot(self, x, exclude):
-        maxes    = [1, 10, 12, 6, 23, 5, 6, 9, 8, 8, 38, 2]
+        maxes    = x.max(axis=0)
         newArray = []
 
-        #i indexes rows, j indexes colums in ith row
         for i in range(len(x)):
             newline = []
             for j in range(len(x[i])):
@@ -58,11 +56,7 @@ class DataPreprocessor():
 
         x[4] = int(hours)
 
-    
-    def preprocess(self, data=[]):
-        if (len(data) != 0):
-            self.data = data
- 
+    def preprocess(self):
         for i in range(len(self.data)):
             self.setVehicleAgeBand(self.data[i])
             self.setTimeBand(self.data[i])
@@ -71,34 +65,31 @@ class DataPreprocessor():
 
         # Convert to np array & one hot
         self.data = np.asarray(self.data)
-        print(self.data.max(axis=0))
-        self.data = self.oneHot(self.data, [])
-        print(self.data[0])
+        self.data = self.oneHot(self.data, [10])
 
     def getDataForSeverity(self):
-        X = self.data[:, :-42]
+        X = self.data[:, :-4]
         y = self.data[:, -3:]
         return X, y
 
     def getDataForCasualties(self):
-
-        X1 = self.data[:, :-42]
+        X1 = self.data[:, :-4]
         X2 = self.data[:, -3:]
         X = np.column_stack((X1, X2))
 
-        y = self.data[:, -42:-3]
+        y = self.data[:, -4]
         return X, y
 
     def fillMissingData(self, x):
         # Gender
         x[0] = x[0] - 1
         if x[0] != 0 and x[0] != 1:
-            x[0] = randint(0,1)
+            x[0] = randint(0, 1)
 
         # Age band of driver
         x[1] = x[1] - 1
         if x[1] == -2:
-            x[1] = 3
+            x[1] = randint(0, 10)
 
         # Day of week
         x[3] = x[3] - 1
@@ -121,7 +112,7 @@ class DataPreprocessor():
 
         # Speed limit
         if x[6] == 0:
-            x[6] = 40
+            x[6] == 40
 
         x[6] = int(x[6] / 10 - 1)
 

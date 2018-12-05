@@ -3,7 +3,7 @@ from flask import make_response
 from DataPreprocessor import DataPreprocessor
 import csv
 import os
-from keras.models import load_model 
+from keras.models import load_model
 import numpy
 
 app = Flask(__name__)
@@ -70,8 +70,6 @@ def login():
         print("size outputs " + str(len(outputs)))
 
         print(outputs[0])
-        
-        print("I'm here")
 
         results = []
         for r in outputs:
@@ -80,7 +78,6 @@ def login():
             print(max(o))
             res = o.index(max(o))
             results.append(res)
-        print("I'm there")
         print(str(results))
         # if res == 0:
         #     result = 'Low'
@@ -90,7 +87,7 @@ def login():
         #     result = 'High'
 
         resultsStr = str(results)
-        
+
         finalResult = resultsStr[1:-1]
         print(finalResult)
 
@@ -101,10 +98,10 @@ def login():
 
 if __name__ == "__main__":
     app.run(debug = True)
-    
+
 #get
 '''
-sex_of_driver, 
+sex_of_driver,
 '''
 #need
 '''sex_of_driver,age_band_of_driver,age_of_vehicle,day_of_week,time,
